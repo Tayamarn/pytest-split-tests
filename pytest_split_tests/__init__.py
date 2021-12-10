@@ -2,6 +2,7 @@
 import json
 import math
 from random import Random
+import sys
 
 from _pytest.config import create_terminal_writer
 
@@ -91,6 +92,20 @@ def pytest_collection_modifyitems(session, config, items):
             '\nRunning test group #{0} ({1} tests)\n'.format(
                 group_id,
                 len(items)
+            ),
+            yellow=True
+        )
+        terminal_reporter.write(message)
+        message = terminal_writer.markup(
+            '\nsys.version: {0}\n'.format(
+                sys.version,
+            ),
+            yellow=True
+        )
+        terminal_reporter.write(message)
+        message = terminal_writer.markup(
+            '\nunscheduled_tests: {0}\n'.format(
+                unscheduled_tests,
             ),
             yellow=True
         )
