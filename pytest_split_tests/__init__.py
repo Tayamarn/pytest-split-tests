@@ -2,6 +2,7 @@
 import json
 import math
 from random import Random
+import re
 import sys
 
 from _pytest.config import create_terminal_writer
@@ -71,7 +72,10 @@ def pytest_collection_modifyitems(session, config, items):
                           for test_name in prescheduled_data[group_id - 1]
                           if test_name in test_dict]
     unscheduled_tests = [item for item in items if item not in all_prescheduled_tests]
-    unscheduled_tests.sort(key=lambda x: x.name)
+    unscheduled_tests.sort(
+        key=lambda x: '_'.join(
+            [re.sub('[0-9_]*$', '', x.name)] +
+            [m.name for m in x.own_markers if m.name.isdigit()]))
 
     if seed is not False:
         seeded = Random(seed)
@@ -109,7 +113,6 @@ def pytest_collection_modifyitems(session, config, items):
             ),
             yellow=True
         )
-        terminal_reporter.write(message)
         message = terminal_writer.markup(
             '\n'.join([item.name for item in items])+'\n',
             yellow=True
